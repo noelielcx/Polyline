@@ -16,11 +16,52 @@ let polyline // La polyline en cours de construction;
 
 const polylineMachine = createMachine(
     {
-        /** @xstate-layout N4IgpgJg5mDOIC5gF8A0IB2B7CdGgAcsAbATwBkBLDMfEI2SgF0qwzoA9EBaANnVI9eAOgAM4iZMkB2ZGnokK1MMMoRitJAsYs2nRABYATAMQAOAIzCD0gJwXetgwGZezgw9ty5QA */
+        /** @xstate-layout N4IgpgJg5mDOIC5QAcD2AbAngGQJYDswA6XCdMAYgFkB5AVQGUBRAYWwEkWBpAbQAYAuohSpYuAC65U+YSAAeiAIx8AnEQDMAJj591AVgAcKgCyndmgDQhMiALTq+RAwDY+Admd6+etwePPnTWMAX2CrNCw8QiIAEQAlAEEAdXYAOQBxanpmNk5eQVk0MUlpWQUEW0VAokD1RT09YzdlFSCrGwrNTUUiTTd+9X8VPj7FJtDwjBwCYnjktMzaRiZaADUmfiEkECKJKRlt8qq1AONvdTc9dRMDA0trO00rohUXJsVFdQD9RTcJnamUVmiRSGQoACEAIYAYwA1rBkDCwJtCqI9qVDnZFCoepoLncfiM-Hp2ohrkQ9JocVd6g5jHj1P8ItNonNQZkmPhxGAAE4o7a7EoHUDlPFuIjGRpnFR6bFuGUy0kIT6aCV3WWU258bF+JmAmaxEELChMWDQyHIZEFAVooVlMkjIh8AyUwZ6FT9RS3EkPCpjVVjQwNYaKboqFShMIgfCoCBwVGRGao4r7e2dcligmyomSpX2Yy4lxefTGAy+C4hKPMoEkMhgZPo4XyJTqAxENwjALOFTODzF4xKmVqprDXwmf0Rqv61lGjINu2YhDOXE6HRubrdZdGPMfNTr516buvOq+P6RoA */
         id: "polyLine",
         initial: "idle",
         states : {
             idle: {
+                on: {
+                    MOUSECLICK: {
+                        target: "DRAWING",
+                        actions: "createLine"
+                    }
+                }
+            },
+
+            DRAWING: {
+                on: {
+                    MOUSECLICK: {
+                        target: "DRAWING",
+                        actions: "addPoint",
+                        internal: true,
+                        cond: "pasPlein"
+                    },
+
+                    MOUSEMOVE: {
+                        target: "DRAWING",
+                        internal: true,
+                        actions: "setLastPoint"
+                    },
+
+                    Escape: {
+                        target: "idle",
+                        actions: "abandon"
+                    },
+
+                    Enter: {
+                        target: "idle",
+                        actions: "saveLine",
+                        cond: "pasPlein"
+                    },
+
+                    Backspace: {
+                        target: "DRAWING",
+                        actions: "removeLastPoint",
+                        internal: true,
+                        cond: "plusDeDeuxPoints"
+                    }
+                }
             }
         }
     },
